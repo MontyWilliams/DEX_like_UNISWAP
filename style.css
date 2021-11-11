@@ -26,6 +26,18 @@
     border-radius: 7px;
     cursor: pointer;
 }
-.token_list_img{
+.token_list_img, .token_img{
     width: 40px;
+}
+.modal_body{
+    height: 600px;
+    overflow: scroll;
+}
+.token_row{
+    padding: 5px 10px;
+}
+.token_row:hover{
+    background-color: #aa9f9f;
+    color: white;
+    cursor: pointer;
 }
