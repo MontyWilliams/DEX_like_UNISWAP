@@ -2,9 +2,10 @@ const serverUrl = "https://blrjwk58waec.usemoralis.com:2053/server";
 const appId = "EWWUBg2MHRZEtrK8pWA9VRlcaobAAVglh8vKlTnJ";
 Moralis.start({ serverUrl, appId });
 
-let currentTrade = {};
+var currentTrade = {};
 let currentSelectSide;
 let tokens;
+
 
 async function init() {
   await Moralis.start({ serverUrl, appId });
@@ -60,17 +61,17 @@ function renderInterface(){
 }
 
 async function login() {
-  let user = Moralis.User.current();
-  if (!user) {
-   try {
-      user = await Moralis.authenticate({ signingMessage: "Getting it ready for ya!" })
-      console.log(user)
-      console.log(user.get('ethAddress'))
-   } catch(error) {
-     console.log(error)
-   }
+  try {
+    currentUser = Moralis.User.current();
+    if (!currentUser) {
+      currentUser = await Moralis.authenticate();
+    }
+    document.getElementById("swap_button").disabled = false;
+  } catch (error) {
+    console.log(error);
   }
 }
+
 
 async function logOut() {
   await Moralis.User.logOut();
@@ -88,21 +89,21 @@ function closeModal(){
 async function getQuote() {
   if (!currentTrade.from || !currentTrade.to || !document.getElementById("from_amount").value) return;
 
-  let amount = Number(document.getElementById("from_amount").value * 10 ** currentTrade.from.decimals);
+  var amount = Number(document.getElementById("from_amount").value * 10 ** currentTrade.from.decimals);
 
   const quote = await Moralis.Plugins.oneInch.quote({
     chain: "eth", // The blockchain you want to use (eth/bsc/polygon)
     fromTokenAddress: currentTrade.from.address, // The token you want to swap
     toTokenAddress: currentTrade.to.address, // The token you want to receive
     amount: amount,
-  })
+  });
   console.log(quote);
   // document.getElementById("gas_estimate").innerHTML = quote.estimatedGas;
   document.getElementById("to_amount").value = quote.toTokenAmount / 10 ** quote.toToken.decimals;
 }
 
 init();
- 
+
 document.getElementById("modal_close").onclick = closeModal;
 document.getElementById("from_token_select").onclick = () => {
   openModal("from");
